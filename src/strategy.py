@@ -1,16 +1,17 @@
 def generate_signals(predictions, actual_prices, rsi_values):
     signals = []
 
-    for i in range(len(predictions)):
-        pred = predictions[i]
-        price = actual_prices[i]
+    for i in range(1, len(predictions)):
+        change = predictions[i] - predictions[i-1]
         rsi = rsi_values[i]
 
-        if pred > price * 1.002 and rsi < 40:
+        # Hybrid logic (LSTM + RSI)
+        if change > 0.2 and rsi < 45:
             signals.append("BUY")
-        elif pred < price * 0.998 and rsi > 60:
+        elif change < -0.2 and rsi > 55:
             signals.append("SELL")
         else:
             signals.append("HOLD")
 
+    signals.insert(0, "HOLD")
     return signals
